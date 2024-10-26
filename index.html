@@ -1,0 +1,475 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <style>
+    html {
+      overflow: hidden;
+      cursor: none;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      margin: 0;
+      background: linear-gradient(45deg, purple, indigo, blue);
+      animation: swipeUp 1s ease;
+      position: relative;
+      /* Added */
+    }
+
+    #quote {
+      z-index: 2;
+      position: absolute;
+      text-align: center;
+      color: #fff;
+      font-size: 1.3em;
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      top: 2%;
+      right: 15%;
+      left: 15%;
+    }
+
+    .i1,
+    .i2,
+    .i3,
+    .i4 {
+      display: flex;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: .5s;
+      position: absolute;
+      z-index: -1;
+      animation: swipedown 1s ease;
+    }
+
+    .i1 {
+      top: -50px;
+      width: 300px;
+      height: 300px;
+      left: -15px;
+      animation-delay: 0.199s;
+      z-index: 1;
+    }
+
+    .i2 {
+      bottom: -50px;
+      width: 100px;
+      height: 100px;
+      right: 50px;
+      animation-delay: 0.01s;
+      z-index: 1;
+    }
+
+    .i3 {
+      top: -25px;
+      right: -15px;
+      width: 150px;
+      animation-delay: 0.03s;
+      height: 150px;
+      z-index: 1;
+    }
+
+    .i4 {
+      bottom: -15px;
+      left: -5px;
+      width: 80px;
+      animation-delay: 0.03s;
+      height: 80px;
+      z-index: 1;
+    }
+
+    #stopwatch {
+      font-size: 5em;
+      letter-spacing: 10px;
+      display: flex;
+      border-radius: 10px;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      color: #fff;
+      transition: .5s;
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      left: 15%;
+      bottom: 15%;
+    }
+
+    #stopwatch:active {
+      transform: scale(1.012);
+    }
+
+    #stopwatch:hover {
+      scale: 1.01;
+    }
+
+
+    .cursor {
+      display: flex;
+      position: absolute;
+      width: 70px;
+      top: -10vh;
+      left: -10vh;
+      transition: 0.01s;
+      height: 70px;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      pointer-events: none;
+      /* So it doesn't interfere with clicking */
+      z-index: 9999;
+      /* Make sure it's above everything else */
+    }
+
+    @keyframes swipeUp {
+      from {
+        opacity: 0;
+        transform: translateY(-200px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes swipedown {
+      from {
+        opacity: 0;
+        transform: translateY(-600px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="quote"></div>
+  <div id="stopwatch">00:00.00</div>
+  <div class="i1" onclick="changeBackgroundColor2()"></div>
+  <div class="i2" onclick="changeBackgroundColor()"></div>
+  <div class="i3" onclick="changeBackgroundColor1()"></div>
+  <div class="i4" onclick="changeBackgroundColor3()"></div>
+  <div class="cursor"></div> <!-- Cursor follower -->
+
+
+
+
+  <script>
+
+document.addEventListener("keydown", function(event) {
+  if (event.code === "Space" && event.target === document.body) {
+    event.preventDefault(); // Prevent scrolling if spacebar is pressed
+    document.getElementById("stopwatch").click(); // Trigger button click
+  }
+});
+
+
+
+
+
+  
+    // Function to change background color on double click
+    function changeBackgroundOnDoubleClick() {
+      const body = document.body;
+      // Define multiple dark linear gradients with different colors here
+      const darkLinearGradients = [
+        "linear-gradient(45deg, #1F1F6E, #04042C)", // Horizontal (Dark Blue)
+        "linear-gradient(45deg, #B7F8DB, #50A7C2)", // Horizontal (Light Blue)
+        "linear-gradient(132deg, #8C115D, #520035)", // Vertical (Dark Pink)
+        "linear-gradient(45deg, #30002D, #77003C)", // Diagonal (Dark Purple)
+        "linear-gradient(135deg, #3E0843, #9400BB)", // Diagonal (Dark Violet)
+        "linear-gradient(60deg, #2A0A29, #85002E)", // Diagonal (Dark Maroon)
+        "linear-gradient(0deg, #15002E, #2D0A4A)", // Vertical (Dark Indigo)
+        "linear-gradient(135deg, #0B0D1E, #0F3D7A)", // Diagonal (Dark Navy)
+        "linear-gradient(225deg, #241B2D, #470047)", // Diagonal (Dark Magenta)
+        "linear-gradient(315deg, #222034, #502838)", // Diagonal (Dark Cobalt)
+        "linear-gradient(45deg, #03001E, #9D0208)", // Horizontal (Dark Red)
+        "linear-gradient(132deg, #3F0000, #7E0000)", // Vertical (Dark Crimson)
+        "linear-gradient(45deg, #000000, #380036)", // Diagonal (Dark Plum)
+        "linear-gradient(135deg, #000000, #6A000A)", // Diagonal (Dark Burgundy)
+        "linear-gradient(60deg, #3C3B3F, #605C3C)", // Diagonal (Dark Charcoal)
+        "linear-gradient(270deg, #002932, #005558)", // Horizontal (Dark Cyan)
+        "linear-gradient(0deg, #0A0A0E, #1D1D26)", // Vertical (Dark Steel)
+        "linear-gradient(135deg, #26233D, #45373D)", // Diagonal (Dark Bronze)
+        "linear-gradient(225deg, #2C213C, #5E3C58)", // Diagonal (Dark Raspberry)
+        "linear-gradient(315deg, #1B2E3F, #28587B)" // Diagonal (Dark Slate)
+      ];
+      // Choose a random gradient from the defined list
+      const randomGradient = darkLinearGradients[Math.floor(Math.random() * darkLinearGradients.length)];
+      body.style.background = randomGradient;
+    }
+    // Double-click event listener to change background on double click
+    document.body.addEventListener('dblclick', changeBackgroundOnDoubleClick);
+  </script>
+  
+
+
+
+  <script>
+    function changeBackgroundColor3() {
+      const body = document.body;
+      // Define multiple dark linear gradients with different colors here
+      const darkLinearGradients = [
+        "linear-gradient(45deg, #1F1F6E, #04042C)", // Horizontal (Dark Blue)
+        "linear-gradient(132deg, #8C115D, #520035)", // Vertical (Dark Pink)
+        "linear-gradient(45deg, #30002D, #77003C)", // Diagonal (Dark Purple)
+        "linear-gradient(135deg, #3E0843, #9400BB)", // Diagonal (Dark Violet)
+        "linear-gradient(60deg, #2A0A29, #85002E)", // Diagonal (Dark Maroon)
+        "linear-gradient(270deg, #001319, #003459)", // Horizontal (Dark Teal)
+        "linear-gradient(0deg, #15002E, #2D0A4A)", // Vertical (Dark Indigo)
+        "linear-gradient(135deg, #0B0D1E, #0F3D7A)", // Diagonal (Dark Navy)
+        "linear-gradient(225deg, #241B2D, #470047)", // Diagonal (Dark Magenta)
+        "linear-gradient(315deg, #222034, #502838)", // Diagonal (Dark Cobalt)
+        "linear-gradient(45deg, #03001E, #9D0208)", // Horizontal (Dark Red)
+        "linear-gradient(132deg, #3F0000, #7E0000)", // Vertical (Dark Crimson)
+        "linear-gradient(45deg, #000000, #380036)", // Diagonal (Dark Plum)
+        "linear-gradient(135deg, #000000, #6A000A)", // Diagonal (Dark Burgundy)
+        "linear-gradient(60deg, #3C3B3F, #605C3C)", // Diagonal (Dark Charcoal)
+        "linear-gradient(270deg, #002932, #005558)", // Horizontal (Dark Cyan)
+        "linear-gradient(0deg, #0A0A0E, #1D1D26)", // Vertical (Dark Steel)
+        "linear-gradient(135deg, #26233D, #45373D)", // Diagonal (Dark Bronze)
+        "linear-gradient(225deg, #2C213C, #5E3C58)", // Diagonal (Dark Raspberry)
+        "linear-gradient(315deg, #1B2E3F, #28587B)" // Diagonal (Dark Slate)
+      ];
+      // Choose a random gradient from the defined list
+      const randomGradient = darkLinearGradients[Math.floor(Math.random() * darkLinearGradients.length)];
+      body.style.background = randomGradient;
+    }
+  </script>
+
+  <script>
+
+
+    function changeBackgroundColor2() {
+      const body = document.body;
+      // Define multiple dark linear gradients here
+      const darkLinearGradients = [
+        "linear-gradient(45deg, #380036, #0CBABA)", // Horizontal
+        "linear-gradient(132deg, #0D324D, #7F5A83)", // Vertical
+        "linear-gradient(45deg, #233329, #63D471)", // Diagonal
+        "linear-gradient(135deg, #2A5470, #4C4177)", // Diagonal
+        "linear-gradient(60deg, #000000, #923CB5)", // Diagonal
+        "linear-gradient(270deg, #000000, #A55C1B)", // Horizontal
+        "linear-gradient(0deg, #380036, #0CBABA)", // Vertical
+        "linear-gradient(135deg, #0D324D, #7F5A83)", // Diagonal
+        "linear-gradient(225deg, #233329, #63D471)", // Diagonal
+        "linear-gradient(315deg, #2A5470, #4C4177)", // Diagonal
+        "linear-gradient(45deg, #000000, #923CB5)", // Horizontal
+        "linear-gradient(132deg, #000000, #A55C1B)", // Vertical
+        "linear-gradient(45deg, #380036, #0CBABA)", // Diagonal
+        "linear-gradient(135deg, #0D324D, #7F5A83)", // Diagonal
+        "linear-gradient(60deg, #233329, #63D471)", // Diagonal
+        "linear-gradient(270deg, #2A5470, #4C4177)", // Horizontal
+        "linear-gradient(0deg, #000000, #923CB5)", // Vertical
+        "linear-gradient(135deg, #000000, #A55C1B)", // Diagonal
+        "linear-gradient(225deg, #380036, #0CBABA)", // Diagonal
+        "linear-gradient(315deg, #0D324D, #7F5A83)" // Diagonal
+      ];
+      // Choose a random gradient from the defined list
+      const randomGradient = darkLinearGradients[Math.floor(Math.random() * darkLinearGradients.length)];
+      body.style.background = randomGradient;
+    }
+
+    function changeBackgroundColor1() {
+      const body = document.body;
+      // Define more dark linear gradients with different angles here
+      const darkLinearGradients = [
+        "linear-gradient(45deg, #262626, #474747)", // Horizontal
+        "linear-gradient(132deg, #1a1a1a, #333333)", // Vertical
+        "linear-gradient(45deg, #2c3e50, #4a627a)", // Diagonal
+        "linear-gradient(135deg, #0f2027, #203a43, #2c5364)", // Diagonal
+        "linear-gradient(60deg, #1e3c72, #2a5298)", // Diagonal
+        "linear-gradient(270deg, #424242, #000000)", // Horizontal
+        "linear-gradient(0deg, #333333, #000000)", // Vertical
+        "linear-gradient(135deg, #292929, #000000)", // Diagonal
+        "linear-gradient(225deg, #2e2e2e, #000000)", // Diagonal
+        "linear-gradient(315deg, #383838, #000000)" // Diagonal
+      ];
+      // Choose a random gradient from the defined list
+      const randomGradient = darkLinearGradients[Math.floor(Math.random() * darkLinearGradients.length)];
+      body.style.background = randomGradient;
+    }
+
+
+
+
+    function changeBackgroundColor() {
+      const body = document.body;
+      const randomAngle = Math.floor(Math.random() * 360);
+      const color1 = getRandomColor();
+      const color2 = getRandomColor();
+      body.style.background = `linear-gradient(${randomAngle}deg, ${color1}, ${color2})`;
+    }
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    let timer; // Timer variable
+    let startTime; // Start time variable
+    let running = false; // Flag to check if stopwatch is running
+    let pausedTime = 0; // Paused time variable
+
+    // Array of quotes
+    const quotes = [
+      "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
+      "Believe you can and you're halfway there. - Theodore Roosevelt",
+      "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt",
+      "Success is walking from failure to failure with no loss of enthusiasm. - Winston Churchill",
+      "It does not matter how slowly you go as long as you do not stop. - Confucius",
+      "The only way to do great work is to love what you do. - Steve Jobs",
+      "Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work. And the only way to do great work is to love what you do. - Steve Jobs",
+      "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+      "The secret of getting ahead is getting started. - Mark Twain",
+      "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+      "The only person you are destined to become is the person you decide to be. - Ralph Waldo Emerson",
+      "You miss 100% of the shots you don't take. - Wayne Gretzky",
+      "The only place where success comes before work is in the dictionary. - Vidal Sassoon",
+      "The best way to predict the future is to create it. - Abraham Lincoln",
+      "You are never too old to set another goal or to dream a new dream. - C.S. Lewis",
+      "Aim for the moon. If you miss, you may hit a star. - W. Clement Stone",
+      "The only way to achieve the impossible is to believe it is possible. - Charles Kingsleigh",
+      "Don't let what you cannot do interfere with what you can do. - John Wooden",
+      "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt",
+      "The harder you work for something, the greater you'll feel when you achieve it. - Unknown",
+      "Do what you can with all you have, wherever you are. - Theodore Roosevelt",
+      "Success is not the key to happiness. Happiness is the key to success. If you love what you are doing, you will be successful. - Albert Schweitzer",
+      "Success is not how high you have climbed, but how you make a positive difference to the world. - Roy T. Bennett",
+      "Success is not in what you have, but who you are. - Bo Bennett",
+      "The road to success and the road to failure are almost exactly the same. - Colin R. Davis",
+      "The difference between a successful person and others is not a lack of strength, not a lack of knowledge, but rather a lack in will. - Vince Lombardi",
+      "The only thing standing between you and your goal is the story you keep telling yourself as to why you can't achieve it. - Jordan Belfort",
+      "I attribute my success to this: I never gave or took any excuse. - Florence Nightingale",
+      "It's not whether you get knocked down, it's whether you get up. - Vince Lombardi",
+      "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
+      // Add more quotes here
+    ];
+
+    // Function to select and display a random quote
+    function displayRandomQuote() {
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      document.getElementById('quote').textContent = quotes[randomIndex];
+    }
+
+    // Call the function to display a random quote when the page loads
+    displayRandomQuote();
+
+    // Function to start or stop the stopwatch
+    function toggleStopwatch() {
+      if (!running) {
+        startStopwatch();
+      } else {
+        stopStopwatch();
+      }
+    }
+
+    // Function to start the stopwatch
+    function startStopwatch() {
+      if (!running) {
+        running = true;
+        startTime = Date.now() - pausedTime;
+        timer = setInterval(updateStopwatch, 10);
+      }
+    }
+
+    // Function to stop the stopwatch
+    function stopStopwatch() {
+      clearInterval(timer);
+      running = false;
+      pausedTime = Date.now() - startTime;
+    }
+
+    // Function to reset the stopwatch
+    function resetStopwatch() {
+      clearInterval(timer);
+      running = false;
+      pausedTime = 0;
+      document.getElementById('stopwatch').textContent = '00:00.00';
+    }
+
+    // Function to update the stopwatch display
+    function updateStopwatch() {
+      const elapsedTime = Date.now() - startTime;
+      const minutes = Math.floor(elapsedTime / (1000 * 60));
+      const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+      const milliseconds = Math.floor((elapsedTime % 1000) / 10);
+      document.getElementById('stopwatch').textContent = `${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds)}`;
+    }
+
+    // Function to add leading zeros to numbers
+    function padZero(num) {
+      return num < 10 ? `0${num}` : num;
+    }
+
+    // Event listener to toggle the stopwatch on click
+    document.getElementById('stopwatch').addEventListener('click', toggleStopwatch);
+
+    // Event listener to reset the stopwatch on double click
+    document.getElementById('stopwatch').addEventListener('dblclick', function (event) {
+      if (!running) {
+        resetStopwatch();
+      }
+    });
+
+    // Event listener to track mouse movements and update the cursor follower
+    document.addEventListener('mousemove', function (event) {
+      const cursor = document.querySelector('.cursor');
+      cursor.style.left = `${event.clientX}px`;
+      cursor.style.top = `${event.clientY}px`;
+    });
+  </script>
+
+</body>
+
+</html>
